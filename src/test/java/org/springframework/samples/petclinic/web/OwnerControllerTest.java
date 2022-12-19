@@ -57,6 +57,18 @@ class OwnerControllerTest {
     }
 
     @Test
+    void processCreationForm_ownerIsValid() throws Exception {
+        mockMvc.perform(post("/owners/new")
+                .param("firstName","Thomas")
+                .param("lastName","Thomas")
+                .param("Address","70 Point De Beauvais")
+                .param("city","Bourg le Roi")
+                .param("telephone","0635284672"))
+                .andExpect(status().is3xxRedirection());
+    }
+
+
+    @Test
     void initCreationForm() throws Exception {
         mockMvc.perform(get("/owners/new"))
                 .andExpect(status().isOk())
