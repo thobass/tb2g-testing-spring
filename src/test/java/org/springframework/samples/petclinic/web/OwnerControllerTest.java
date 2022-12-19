@@ -78,7 +78,7 @@ class OwnerControllerTest {
                 .andExpect(model().attributeHasErrors("owner"))
                 .andExpect(model().attributeHasFieldErrors("owner","address"))
                 .andExpect(model().attributeHasFieldErrors("owner","telephone"))
-                .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+                .andExpect(view().name(OwnerController.VIEWS_OWNER_CREATE_OR_UPDATE_FORM));
     }
 
     @Test
@@ -86,7 +86,32 @@ class OwnerControllerTest {
         mockMvc.perform(get("/owners/new"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("owner"))
-                .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+                .andExpect(view().name(OwnerController.VIEWS_OWNER_CREATE_OR_UPDATE_FORM));
+    }
+
+    @Test
+    void processUpdateOwnerForm_ownerIsValid() throws Exception {
+        mockMvc.perform(post("/owners/{ownerId}/edit",22)
+                        .param("firstName","Thomas")
+                        .param("lastName","Basset")
+                        .param("address","70 Point De Beauvais")
+                        .param("city","Bourg le Roi")
+                        .param("telephone","0635284672"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/owners/{ownerId}"));
+    }
+
+    @Test
+    void processUpdateOwnerForm_ownerIsInvalid() throws Exception {
+        mockMvc.perform(post("/owners/{ownerId}/edit",22)
+                        .param("firstName","Thomas")
+                        .param("lastName","Thomas")
+                        .param("city","Bourg le Roi"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasErrors("owner"))
+                .andExpect(model().attributeHasFieldErrors("owner","address"))
+                .andExpect(model().attributeHasFieldErrors("owner","telephone"))
+                .andExpect(view().name(OwnerController.VIEWS_OWNER_CREATE_OR_UPDATE_FORM));
     }
 
     @Test
